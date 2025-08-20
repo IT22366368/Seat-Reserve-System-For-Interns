@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "vercel-build": "node dbInit.js && next build",
+    "vercel-build": "node dbInit.js",
     "db:init": "node dbInit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
