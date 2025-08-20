@@ -48,7 +48,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["https://yourdomain.com"] // Replace with your production domain
+        ? ["https://seat-reserve-system-for-interns.vercel.app"] // Replace with your production domain
         : ["http://localhost:3000", "http://127.0.0.1:3000"],
     credentials: true,
   })
