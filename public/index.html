@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seat Reservation System - Interns</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <h2>🪑 Seat Reservation System</h2>
+        </div>
+        <div class="nav-menu" id="navMenu">
+          <div class="nav-item" id="loginNavItem">
+            <button class="btn btn-primary" onclick="showLogin()">Login</button>
+          </div>
+          <div class="nav-item" id="registerNavItem">
+            <button class="btn btn-secondary" onclick="showRegister()">
+              Register
+            </button>
+          </div>
+          <div class="nav-item hidden" id="userNavItem">
+            <span id="userNameDisplay"></span>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Login Form -->
+      <div class="form-container" id="loginForm">
+        <div class="form-card">
+          <h3>Login to Your Account</h3>
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <input type="email" id="loginEmail" required />
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              Login
+            </button>
+          </form>
+          <div class="form-footer">
+            <p>
+              Don't have an account?
+              <a href="#" onclick="showRegister()">Register here</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <div class="form-container hidden" id="registerForm">
+        <div class="form-card">
+          <h3>Create New Account</h3>
+          <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label for="registerName">Full Name</label>
+              <input type="text" id="registerName" required />
+            </div>
+            <div class="form-group">
+              <label for="registerEmail">Company Email Address</label>
+              <input
+                type="email"
+                id="registerEmail"
+                required
+                placeholder="yourname@company.com"
+              />
+            </div>
+            <div class="form-group">
+              <label for="registerPassword">Password</label>
+              <input
+                type="password"
+                id="registerPassword"
+                required
+                minlength="6"
+              />
+              <small class="help-text"
+                >Password must contain at least one uppercase letter, one
+                lowercase letter, and one number</small
+              >
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              Register
+            </button>
+          </form>
+          <div class="form-footer">
+            <p>
+              Already have an account?
+              <a href="#" onclick="showLogin()">Login here</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard (Intern) -->
+      <div class="dashboard hidden" id="internDashboard">
+        <div class="dashboard-header">
+          <h3>Welcome, <span id="internNameDisplay"></span>!</h3>
+          <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="showTab('booking')">
+              Book Seat
+            </button>
+            <button class="tab-btn" onclick="showTab('myReservations')">
+              My Reservations
+            </button>
+          </div>
+        </div>
+
+        <!-- Booking Tab -->
+        <div class="tab-content" id="bookingTab">
+          <div class="booking-section">
+            <h4>Reserve Your Seat</h4>
+            <form onsubmit="handleBooking(event)" class="booking-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="reservationDate">Date</label>
+                  <input type="date" id="reservationDate" required />
+                </div>
+                <div class="form-group">
+                  <label for="timeSlot">Time Slot</label>
+                  <select id="timeSlot" required>
+                    <option value="">Select time slot</option>
+                    <option value="9:00 AM - 1:00 PM">
+                      Morning (9:00 AM - 1:00 PM)
+                    </option>
+                    <option value="1:00 PM - 5:00 PM">
+                      Afternoon (1:00 PM - 5:00 PM)
+                    </option>
+                    <option value="9:00 AM - 5:00 PM">
+                      Full Day (9:00 AM - 5:00 PM)
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="searchAvailableSeats()"
+              >
+                Search Available Seats
+              </button>
+            </form>
+
+            <div id="availableSeatsSection" class="hidden">
+              <h5>Available Seats</h5>
+              <div id="availableSeatsGrid" class="seats-grid"></div>
+              <div class="selected-seat-info hidden" id="selectedSeatInfo">
+                <h6>Selected Seat: <span id="selectedSeatDisplay"></span></h6>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="confirmBooking()"
+                >
+                  Confirm Reservation
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- My Reservations Tab -->
+        <div class="tab-content hidden" id="myReservationsTab">
+          <div class="reservations-section">
+            <h4>My Reservations</h4>
+            <div class="reservations-filters">
+              <select
+                id="reservationStatusFilter"
+                onchange="loadMyReservations()"
+              >
+                <option value="">All Reservations</option>
+                <option value="Active">Active</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div id="myReservationsGrid" class="reservations-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Dashboard -->
+      <div class="dashboard hidden" id="adminDashboard">
+        <div class="dashboard-header">
+          <h3>Admin Dashboard</h3>
+          <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="showAdminTab('overview')">
+              Overview
+            </button>
+            <button class="tab-btn" onclick="showAdminTab('seats')">
+              Manage Seats
+            </button>
+            <button class="tab-btn" onclick="showAdminTab('reservations')">
+              Reservations
+            </button>
+            <button class="tab-btn" onclick="showAdminTab('reports')">
+              Reports
+            </button>
+          </div>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="tab-content" id="overviewTab">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h4 id="totalSeatsCount">0</h4>
+              <p>Total Seats</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="totalInternsCount">0</h4>
+              <p>Total Interns</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="todayReservationsCount">0</h4>
+              <p>Today's Reservations</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="activeReservationsCount">0</h4>
+              <p>Active Reservations</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Seats Tab -->
+        <div class="tab-content hidden" id="seatsTab">
+          <div class="section-header">
+            <h4>Manage Seats</h4>
+            <button class="btn btn-primary" onclick="showAddSeatForm()">
+              Add New Seat
+            </button>
+          </div>
+
+          <div id="addSeatForm" class="form-card hidden">
+            <h5 id="addSeatFormTitle">Add New Seat</h5>
+            <form onsubmit="handleAddSeat(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="seatNumber">Seat Number</label>
+                  <input type="text" id="seatNumber" required />
+                </div>
+                <div class="form-group">
+                  <label for="locationArea">Location/Area</label>
+                  <input type="text" id="locationArea" required />
+                </div>
+                <div class="form-group">
+                  <label for="seatStatus">Status</label>
+                  <select id="seatStatus" required>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button
+                  type="submit"
+                  id="addSeatSubmitBtn"
+                  class="btn btn-primary"
+                >
+                  Add Seat
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="hideAddSeatForm()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div id="seatsGrid" class="admin-grid"></div>
+        </div>
+
+        <!-- Reservations Tab -->
+        <div class="tab-content hidden" id="reservationsTab">
+          <div class="section-header">
+            <h4>All Reservations</h4>
+            <div class="filters">
+              <input
+                type="date"
+                id="reservationDateFilter"
+                onchange="loadAllReservations()"
+              />
+              <select
+                id="adminReservationStatusFilter"
+                onchange="loadAllReservations()"
+              >
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div id="allReservationsGrid" class="admin-grid"></div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div class="tab-content hidden" id="reportsTab">
+          <div class="section-header">
+            <h4>Usage Reports</h4>
+            <div class="report-controls">
+              <input type="date" id="reportStartDate" />
+              <input type="date" id="reportEndDate" />
+              <button class="btn btn-primary" onclick="generateReport()">
+                Generate Report
+              </button>
+              <button class="btn btn-secondary" onclick="downloadReportCSV()">
+                Download CSV
+              </button>
+            </div>
+          </div>
+          <div id="reportResults" class="report-section"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Modal for Edit/Delete confirmations -->
+    <div id="modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="modalTitle">Confirmation</h4>
+          <span class="modal-close" onclick="hideModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="modalBody">Are you sure?</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="hideModal()">
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            id="modalConfirmBtn"
+            onclick="confirmModalAction()"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
